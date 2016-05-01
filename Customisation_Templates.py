@@ -6,6 +6,11 @@ import os
 import subprocess
 import time
 import shutil
+ # Import needed for internet part
+import sys
+from textwrap import TextWrapper
+import docx
+import PyPDF2
 
 template_name = 'Letter_Template.docx'
 customization_list = 'Contact_List.csv'
@@ -62,12 +67,16 @@ for row in reader:
 # Compress the new word file together
         newDocx.write("temp.xml", "word/document.xml")
 
+
 # Send it to the printer
         print "Sending to printer letter with variables %s" % replacement_dict
-        subprocess.check_call(["lp", "-d", "Hannah_s_Printer", "%s/letter%s.docx" % (folder_name, letter_iterator)])
+        # subprocess.check_call(["lp", "-d", "Hannah_s_Printer", "%s/letter%s.pdf" % (folder_name, letter_iterator)])
+        subprocess.call(["launch", "-p", "%s/letter%s.docx" % (folder_name, letter_iterator)])
 
         letter_iterator = letter_iterator + 1
         newDocx.close()
+
+        time.sleep(3)
 
 shutil.rmtree('word')
 os.remove('temp.xml')
