@@ -6,11 +6,7 @@ import os
 import subprocess
 import time
 import shutil
- # Import needed for internet part
-import sys
-from textwrap import TextWrapper
-import docx
-import PyPDF2
+
 
 template_name = 'Letter_Template.docx'
 customization_list = 'Contact_List.csv'
