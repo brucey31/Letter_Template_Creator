@@ -8,8 +8,8 @@ import time
 import shutil
 
 
-template_name = 'Letter_Template.docx'
-customization_list = 'Contact_List.csv'
+template_name = 'Focus GE Back.docx'
+customization_list = 'Contact_list_python.csv'
 
 # Get your template file and search for the number of parameter to be included in it
 templateDocx = zipfile.ZipFile(template_name)
