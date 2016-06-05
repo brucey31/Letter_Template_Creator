@@ -6,6 +6,9 @@ import os
 import subprocess
 import time
 import shutil
+import libreoffice_convert
+
+
 
 
 template_name = 'Focus GE Back.docx'
@@ -22,7 +25,7 @@ reader = csv.reader(Customisation_list)
 folder_name = time.strftime('%Y-%m-%d-%H:%M:%S')
 os.mkdir(folder_name)
 
-letter_iterator = 0
+letter_iterator = 1
 
 for row in reader:
     replacement_dict = []
@@ -63,11 +66,22 @@ for row in reader:
 # Compress the new word file together
         newDocx.write("temp.xml", "word/document.xml")
 
+# Convert to PDF
+        shutil.move("%s/letter%s.docx" % (folder_name, letter_iterator), "/Applications/LibreOffice.app/Contents/MacOS/letter%.docx" % letter_iterator)
+        # subprocess.call(["sudo", "cp", "%s/letter%s.docx" % (folder_name, letter_iterator), "/Applications/LibreOffice.app/Contents/MacOS/letter%.docx" % letter_iterator])
+        subprocess.call(["cd", "/Applications/LibreOffice.app/Contents/MacOS"])
+        os.rename('/Applications/LibreOffice.app/Contents/MacOS/letter%socx' % letter_iterator, "/Applications/LibreOffice.app/Contents/MacOS/letter%s.docx" % letter_iterator)
+        subprocess.call(["./Applications/LibreOffice.app/Contents/MacOS/soffice", "--convert-to", "pdf", "letter%s.docx" % letter_iterator])
+        subprocess.call(["rm", "%s/letter%s.docx" % (folder_name, letter_iterator)])
+        shutil.move("letter%s.pdf" % letter_iterator, "~/Documents/Customisation_Templates/%s/letter%s.pdf" % (folder_name, letter_iterator))
+        subprocess.call(["cd", "/Documents/Customisation_Templates"])
 
-# Send it to the printer
-        print "Sending to printer letter with variables %s" % replacement_dict
-        # subprocess.check_call(["lp", "-d", "Hannah_s_Printer", "%s/letter%s.pdf" % (folder_name, letter_iterator)])
-        subprocess.call(["launch", "-p", "%s/letter%s.docx" % (folder_name, letter_iterator)])
+
+
+# Send it to the printer Word
+#         print "Sending to printer letter with variables %s" % replacement_dict
+#         # subprocess.check_call(["lp", "-d", "Hannah_s_Printer", "%s/letter%s.pdf" % (folder_name, letter_iterator)])
+#         subprocess.call(["launch", "-p", "%s/letter%s.docx" % (folder_name, letter_iterator)])
 
         letter_iterator = letter_iterator + 1
         newDocx.close()
