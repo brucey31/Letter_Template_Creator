@@ -6,13 +6,17 @@ import os
 import subprocess
 import time
 import shutil
-import libreoffice_convert
-
+import requests
+from requests.auth import HTTPBasicAuth
+import json
 
 
 
 template_name = 'Focus GE Back.docx'
 customization_list = 'Contact_list_python.csv'
+
+zamzar_api_key = 'c0d9af9932bd3c368f535b59cd5667abfc9c7930'
+endpoint = "https://sandbox.zamzar.com/v1/jobs"
 
 # Get your template file and search for the number of parameter to be included in it
 templateDocx = zipfile.ZipFile(template_name)
@@ -67,14 +71,63 @@ for row in reader:
         newDocx.write("temp.xml", "word/document.xml")
 
 # Convert to PDF
-        shutil.move("%s/letter%s.docx" % (folder_name, letter_iterator), "/Applications/LibreOffice.app/Contents/MacOS/letter%.docx" % letter_iterator)
-        # subprocess.call(["sudo", "cp", "%s/letter%s.docx" % (folder_name, letter_iterator), "/Applications/LibreOffice.app/Contents/MacOS/letter%.docx" % letter_iterator])
-        subprocess.call(["cd", "/Applications/LibreOffice.app/Contents/MacOS"])
-        os.rename('/Applications/LibreOffice.app/Contents/MacOS/letter%socx' % letter_iterator, "/Applications/LibreOffice.app/Contents/MacOS/letter%s.docx" % letter_iterator)
-        subprocess.call(["./Applications/LibreOffice.app/Contents/MacOS/soffice", "--convert-to", "pdf", "letter%s.docx" % letter_iterator])
-        subprocess.call(["rm", "%s/letter%s.docx" % (folder_name, letter_iterator)])
-        shutil.move("letter%s.pdf" % letter_iterator, "~/Documents/Customisation_Templates/%s/letter%s.pdf" % (folder_name, letter_iterator))
-        subprocess.call(["cd", "/Documents/Customisation_Templates"])
+#         shutil.move("%s/letter%s.docx" % (folder_name, letter_iterator), "/Applications/LibreOffice.app/Contents/MacOS/letter%.docx" % letter_iterator)
+#         os.chdir("/Applications/LibreOffice.app/Contents/MacOS")
+#         os.rename('/Applications/LibreOffice.app/Contents/MacOS/letter%socx' % letter_iterator, "/Applications/LibreOffice.app/Contents/MacOS/letter%s.docx" % letter_iterator)
+#         subprocess.call(["./soffice", "--convert-to", "pdf", "letter%s.docx" % letter_iterator])
+#         subprocess.call(["rm", "%s/letter%s.docx" % (folder_name, letter_iterator)])
+#         shutil.move("letter%s.pdf" % letter_iterator, "~/Documents/Customisation_Templates/%s/letter%s.pdf" % (folder_name, letter_iterator))
+#         subprocess.call(["cd", "/Documents/Customisation_Templates"])
+
+# Convert to PDF2
+
+        # Submit Job
+        source_file = "%s/letter%s.docx" % (folder_name, letter_iterator)
+        target_format = "pdf"
+
+        file_content = {'source_file': open(source_file, 'rb')}
+        data_content = {'target_format': target_format}
+        res = requests.post(endpoint, data=data_content, files=file_content, auth=HTTPBasicAuth(zamzar_api_key, ''))
+        print res.json()
+        file_id = res.json()['id']
+        print file_id
+        # job_no = response['id'][0]
+        # print job_no
+
+        # Check if the job is done
+        endpoint = "https://sandbox.zamzar.com/v1/jobs/{}".format(file_id)
+        response = requests.get(endpoint, auth=HTTPBasicAuth(zamzar_api_key, ''))
+        status = response.json()['status']
+
+        cannot get job_id working get this file and reset it!!!!!
+
+        file_id = response.json()['target_files']['id']
+        print "Checking Status of Conversion of %s" % file_id
+        print status
+
+        while status != 'successful':
+            print "File Not ready yet \nWaiting 5 Secs"
+            time.sleep(5)
+            response = requests.get(endpoint, auth=HTTPBasicAuth(zamzar_api_key, ''))
+            status = response.json()['status']
+            print status
+
+
+        # Download the Finished file
+        endpoint = "https://sandbox.zamzar.com/v1/files/{}/content".format(file_id)
+        response = requests.get(endpoint, stream=True, auth=HTTPBasicAuth(zamzar_api_key, ''))
+
+        try:
+            with open("%s/letter%s.pdf" % (folder_name, letter_iterator), 'wb') as f:
+                for chunk in response.iter_content(chunk_size=1024):
+                    if chunk:
+                        f.write(chunk)
+                        f.flush()
+
+                print "File downloaded"
+
+        except IOError:
+            print "Error"
 
 
 
