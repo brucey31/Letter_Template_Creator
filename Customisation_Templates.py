@@ -6,6 +6,7 @@ import os
 import subprocess
 import time
 import shutil
+
 import requests
 from requests.auth import HTTPBasicAuth
 import json
@@ -70,73 +71,75 @@ for row in reader:
 # Compress the new word file together
         newDocx.write("temp.xml", "word/document.xml")
 
+
+# ### ##
+
 # Convert to PDF
 #         shutil.move("%s/letter%s.docx" % (folder_name, letter_iterator), "/Applications/LibreOffice.app/Contents/MacOS/letter%.docx" % letter_iterator)
-#         os.chdir("/Applications/LibreOffice.app/Contents/MacOS")
-#         os.rename('/Applications/LibreOffice.app/Contents/MacOS/letter%socx' % letter_iterator, "/Applications/LibreOffice.app/Contents/MacOS/letter%s.docx" % letter_iterator)
-#         subprocess.call(["./soffice", "--convert-to", "pdf", "letter%s.docx" % letter_iterator])
-#         subprocess.call(["rm", "%s/letter%s.docx" % (folder_name, letter_iterator)])
-#         shutil.move("letter%s.pdf" % letter_iterator, "~/Documents/Customisation_Templates/%s/letter%s.pdf" % (folder_name, letter_iterator))
-#         subprocess.call(["cd", "/Documents/Customisation_Templates"])
+        os.chdir("/Applications/LibreOffice.app/Contents/MacOS")
+        # os.rename('/Applications/LibreOffice.app/Contents/MacOS/letter%socx' % letter_iterator, "/Applications/LibreOffice.app/Contents/MacOS/letter%s.docx" % letter_iterator)
+        os.system(["./soffice", "--convert-to", "pdf", "--outdir", "~/Documents/Customisation_Templates/%s" % folder_name,  "~/Documents/Customisation_Templates/%s/letter%s.docx" % (folder_name, letter_iterator)])
+        # subprocess.call(["rm", "letter%s.docx" % letter_iterator])
+        # shutil.move("letter%s.pdf" % letter_iterator, "~/Documents/Customisation_Templates/%s/letter%s.pdf" % (folder_name, letter_iterator))
+        os.chdir("/Users/Bruce/Documents/Customisation_Templates")
 
-# Convert to PDF2
+# ### ##
+        # Convert to PDF2
 
-        # Submit Job
-        source_file = "%s/letter%s.docx" % (folder_name, letter_iterator)
-        target_format = "pdf"
-
-        file_content = {'source_file': open(source_file, 'rb')}
-        data_content = {'target_format': target_format}
-        res = requests.post(endpoint, data=data_content, files=file_content, auth=HTTPBasicAuth(zamzar_api_key, ''))
-        print res.json()
-        file_id = res.json()['id']
-
-        # Check if the job is done
-        endpoint = "https://sandbox.zamzar.com/v1/jobs/{}".format(file_id)
-        response = requests.get(endpoint, auth=HTTPBasicAuth(zamzar_api_key, ''))
-        status = response.json()['status']
-
-
-        print "Checking Status of Conversion of %s" % file_id
-
-        if status =='successful':
-            for k in response.json()['target_files']:
-                file_id = k['id']
-            print response.json()
-            print "Finished Converting really quick\nFile id = " + file_id
-
-        else:
-
-            print status
-            while status != 'successful':
-                print "File Not ready yet \n Waiting 5 Secs"
-                time.sleep(5)
-                response = requests.get(endpoint, auth=HTTPBasicAuth(zamzar_api_key, ''))
-                status = response.json()['status']
-                print status
-                print response.json()
-
-        for k in response.json()['target_files']:
-            file_id = k['id']
-        print file_id
-
-        # Download the Finished file
-        endpoint = "https://sandbox.zamzar.com/v1/files/{}/content".format(file_id)
-        response = requests.get(endpoint, stream=True, auth=HTTPBasicAuth(zamzar_api_key, ''))
-
-        try:
-            with open("%s/letter%s.pdf" % (folder_name, letter_iterator), 'wb') as f:
-                for chunk in response.iter_content(chunk_size=1024):
-                    if chunk:
-                        f.write(chunk)
-                        f.flush()
-
-                print "File downloaded"
-
-        except IOError:
-            print "Error"
-
-
+        # # Submit Job
+        # source_file = "%s/letter%s.docx" % (folder_name, letter_iterator)
+        # target_format = "pdf"
+        #
+        # file_content = {'source_file': open(source_file, 'rb')}
+        # data_content = {'target_format': target_format}
+        # res = requests.post(endpoint, data=data_content, files=file_content, auth=HTTPBasicAuth(zamzar_api_key, ''))
+        # print res.json()
+        # file_id = res.json()['id']
+        #
+        # # Check if the job is done
+        # endpoint = "https://sandbox.zamzar.com/v1/jobs/{}".format(file_id)
+        # response = requests.get(endpoint, auth=HTTPBasicAuth(zamzar_api_key, ''))
+        # status = response.json()['status']
+        #
+        #
+        # print "Checking Status of Conversion of %s" % file_id
+        #
+        # if status =='successful':
+        #     for k in response.json()['target_files']:
+        #         file_id = k['id']
+        #     print response.json()
+        #     print "Finished Converting really quick\nFile id = " + file_id
+        #
+        # else:
+        #
+        #     print status
+        #     while status != 'successful':
+        #         print "File Not ready yet \n Waiting 5 Secs"
+        #         time.sleep(5)
+        #         response = requests.get(endpoint, auth=HTTPBasicAuth(zamzar_api_key, ''))
+        #         status = response.json()['status']
+        #         print status
+        #         print response.json()
+        #
+        # for k in response.json()['target_files']:
+        #     file_id = k['id']
+        # print file_id
+        #
+        # # Download the Finished file
+        # endpoint = "https://sandbox.zamzar.com/v1/files/{}/content".format(file_id)
+        # response = requests.get(endpoint, stream=True, auth=HTTPBasicAuth(zamzar_api_key, ''))
+        #
+        # try:
+        #     with open("%s/letter%s.pdf" % (folder_name, letter_iterator), 'wb') as f:
+        #         for chunk in response.iter_content(chunk_size=1024):
+        #             if chunk:
+        #                 f.write(chunk)
+        #                 f.flush()
+        #
+        #         print "File downloaded"
+        #
+        # except IOError:
+        #     print "Error"
 
 # Send it to the printer Word
 #         print "Sending to printer letter with variables %s" % replacement_dict
