@@ -90,28 +90,35 @@ for row in reader:
         res = requests.post(endpoint, data=data_content, files=file_content, auth=HTTPBasicAuth(zamzar_api_key, ''))
         print res.json()
         file_id = res.json()['id']
-        print file_id
-        # job_no = response['id'][0]
-        # print job_no
 
         # Check if the job is done
         endpoint = "https://sandbox.zamzar.com/v1/jobs/{}".format(file_id)
         response = requests.get(endpoint, auth=HTTPBasicAuth(zamzar_api_key, ''))
         status = response.json()['status']
 
-        cannot get job_id working get this file and reset it!!!!!
 
-        file_id = response.json()['target_files']['id']
         print "Checking Status of Conversion of %s" % file_id
-        print status
 
-        while status != 'successful':
-            print "File Not ready yet \nWaiting 5 Secs"
-            time.sleep(5)
-            response = requests.get(endpoint, auth=HTTPBasicAuth(zamzar_api_key, ''))
-            status = response.json()['status']
+        if status =='successful':
+            for k in response.json()['target_files']:
+                file_id = k['id']
+            print response.json()
+            print "Finished Converting really quick\nFile id = " + file_id
+
+        else:
+
             print status
+            while status != 'successful':
+                print "File Not ready yet \n Waiting 5 Secs"
+                time.sleep(5)
+                response = requests.get(endpoint, auth=HTTPBasicAuth(zamzar_api_key, ''))
+                status = response.json()['status']
+                print status
+                print response.json()
 
+        for k in response.json()['target_files']:
+            file_id = k['id']
+        print file_id
 
         # Download the Finished file
         endpoint = "https://sandbox.zamzar.com/v1/files/{}/content".format(file_id)
