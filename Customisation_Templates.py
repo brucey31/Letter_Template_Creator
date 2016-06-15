@@ -7,14 +7,9 @@ import subprocess
 import time
 import shutil
 
-import requests
-from requests.auth import HTTPBasicAuth
-import json
 
-
-
-template_name = 'Focus GE Back.docx'
-customization_list = 'Contact_list_python.csv'
+template_name = 'Hexis_Plus_Letter.docx'
+customization_list = 'xaa_copy.csv'
 
 zamzar_api_key = 'c0d9af9932bd3c368f535b59cd5667abfc9c7930'
 endpoint = "https://sandbox.zamzar.com/v1/jobs"
@@ -75,13 +70,13 @@ for row in reader:
 # ### ##
 
 # Convert to PDF
-#         shutil.move("%s/letter%s.docx" % (folder_name, letter_iterator), "/Applications/LibreOffice.app/Contents/MacOS/letter%.docx" % letter_iterator)
-        os.chdir("/Applications/LibreOffice.app/Contents/MacOS")
-        # os.rename('/Applications/LibreOffice.app/Contents/MacOS/letter%socx' % letter_iterator, "/Applications/LibreOffice.app/Contents/MacOS/letter%s.docx" % letter_iterator)
-        os.system(["./soffice", "--convert-to", "pdf", "--outdir", "~/Documents/Customisation_Templates/%s" % folder_name,  "~/Documents/Customisation_Templates/%s/letter%s.docx" % (folder_name, letter_iterator)])
-        # subprocess.call(["rm", "letter%s.docx" % letter_iterator])
-        # shutil.move("letter%s.pdf" % letter_iterator, "~/Documents/Customisation_Templates/%s/letter%s.pdf" % (folder_name, letter_iterator))
+        print "Converting " + "~/Documents/Customisation_Templates/%s/letter%s.docx" % (folder_name, letter_iterator)
+        # os.chdir("/Applications/LibreOffice.app/Contents/MacOS")
+
+        SOFFICE = r'/Applications/LibreOffice.app/Contents/MacOS/soffice'
+        subprocess.Popen([SOFFICE, "--convert-to", "pdf", "--outdir", "~/Documents/Customisation_Templates/%s/" % folder_name,  "~/Documents/Customisation_Templates/%s/letter%s.docx" % (folder_name, letter_iterator)])
         os.chdir("/Users/Bruce/Documents/Customisation_Templates")
+        # subprocess.call(["rm", "letter%s.docx" % letter_iterator])
 
 # ### ##
         # Convert to PDF2
