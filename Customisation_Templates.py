@@ -71,12 +71,12 @@ for row in reader:
 
 # Convert to PDF
         print "Converting " + "~/Documents/Customisation_Templates/%s/letter%s.docx" % (folder_name, letter_iterator)
-        # os.chdir("/Applications/LibreOffice.app/Contents/MacOS")
+        shutil.move("%s/letter%s.docx" % (folder_name, letter_iterator), "/Applications/LibreOffice.app/Contents/MacOS/letter%s.docx" %  letter_iterator)
+        subprocess.Popen(["./soffice", "--convert-to", "pdf", "--outdir", "/Users/Bruce/Documents/Customisation_Templates/%s/" % folder_name, "letter%s.docx" % letter_iterator], cwd="/Applications/LibreOffice.app/Contents/MacOS/")
 
-        SOFFICE = r'/Applications/LibreOffice.app/Contents/MacOS/soffice'
-        subprocess.Popen([SOFFICE, "--convert-to", "pdf", "--outdir", "~/Documents/Customisation_Templates/%s/" % folder_name,  "~/Documents/Customisation_Templates/%s/letter%s.docx" % (folder_name, letter_iterator)])
-        os.chdir("/Users/Bruce/Documents/Customisation_Templates")
-        # subprocess.call(["rm", "letter%s.docx" % letter_iterator])
+        # time.sleep(2)
+        # os.remove("/Applications/LibreOffice.app/Contents/MacOS/letter%s.docx" % letter_iterator)
+
 
 # ### ##
         # Convert to PDF2
