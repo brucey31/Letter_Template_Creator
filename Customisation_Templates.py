@@ -70,7 +70,7 @@ for row in reader:
 # Convert to PDF
         print "Converting " + "~/Documents/Customisation_Templates/%s/letter%s.docx" % (folder_name, letter_iterator)
         shutil.move("%s/letter%s.docx" % (folder_name, letter_iterator), "/Applications/LibreOffice.app/Contents/MacOS/letter%s.docx" %  letter_iterator)
-        subprocess.Popen(["./soffice", "--convert-to", "pdf", "--outdir", "/Users/Bruce/Documents/Customisation_Templates/%s/" % folder_name, "letter%s.docx" % letter_iterator], cwd="/Applications/LibreOffice.app/Contents/MacOS/")
+        subprocess.Popen(["./soffice", "--convert-to", "pdf", "--outdir", "/Users/Bruce/Documents/Customisation_Templates/%s/" % folder_name, "letter%s.docx" % letter_iterator], cwd="/Applications/LibreOffice.app/Contents/MacOS/", shell=False, stdin=None, stdout=None, stderr=None, close_fds=True)
 
         letter_iterator = letter_iterator + 1
         newDocx.close()
@@ -78,17 +78,30 @@ for row in reader:
 shutil.rmtree('word')
 os.remove('temp.xml')
 
+time.sleep(letter_iterator * 0.5)
+
 # ### ##
 
-# Convert to SVG
+# Convert to SVG & Clean Up
 
-
-time.sleep(letter_iterator*3)
 svg_list = range(letter_iterator)
 
-for svg in svg_list:
+for i in range(15):
+    wait_num = 0
+    for svg in svg_list:
 
-    if svg > 0:
-        subprocess.call(["pdf2svg", "/Users/Bruce/Documents/Customisation_Templates/%s/letter%s.pdf" % (folder_name, svg), "/Users/Bruce/Documents/Customisation_Templates/%s/letter%s.svg" % (folder_name, svg)])
-        os.remove('/Applications/LibreOffice.app/Contents/MacOS/letter%s.docx' % svg)
-        os.remove('/Users/Bruce/Documents/Customisation_Templates/%s/letter%s.pdf' % (folder_name, svg))
+        if svg > 0:
+            if os.path.isfile("/Users/Bruce/Documents/Customisation_Templates/%s/letter%s.pdf" % (folder_name, svg)):
+                subprocess.call(["pdf2svg", "/Users/Bruce/Documents/Customisation_Templates/%s/letter%s.pdf" % (folder_name, svg), "/Users/Bruce/Documents/Customisation_Templates/%s/letter%s.svg" % (folder_name, svg)])
+                os.remove('/Applications/LibreOffice.app/Contents/MacOS/letter%s.docx' % svg)
+                os.remove('/Users/Bruce/Documents/Customisation_Templates/%s/letter%s.pdf' % (folder_name, svg))
+
+            if os.path.isfile("/Applications/LibreOffice.app/Contents/MacOS/letter%s.docx" % svg):
+                print "Letter %s not converted yet" % svg
+                subprocess.Popen(["./soffice", "--convert-to", "pdf", "--outdir", "/Users/Bruce/Documents/Customisation_Templates/%s/" % folder_name, "letter%s.docx" % svg], cwd="/Applications/LibreOffice.app/Contents/MacOS/")
+
+                wait_num = wait_num + 1
+
+            else:
+                print "Letter %s sucessfully completed" % svg
+    time.sleep(wait_num * 1.5)
