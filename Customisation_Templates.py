@@ -11,8 +11,6 @@ import shutil
 template_name = 'Hexis_Plus_Letter.docx'
 customization_list = 'xaa_copy.csv'
 
-zamzar_api_key = 'c0d9af9932bd3c368f535b59cd5667abfc9c7930'
-endpoint = "https://sandbox.zamzar.com/v1/jobs"
 
 # Get your template file and search for the number of parameter to be included in it
 templateDocx = zipfile.ZipFile(template_name)
@@ -74,77 +72,23 @@ for row in reader:
         shutil.move("%s/letter%s.docx" % (folder_name, letter_iterator), "/Applications/LibreOffice.app/Contents/MacOS/letter%s.docx" %  letter_iterator)
         subprocess.Popen(["./soffice", "--convert-to", "pdf", "--outdir", "/Users/Bruce/Documents/Customisation_Templates/%s/" % folder_name, "letter%s.docx" % letter_iterator], cwd="/Applications/LibreOffice.app/Contents/MacOS/")
 
-        # time.sleep(2)
-        # os.remove("/Applications/LibreOffice.app/Contents/MacOS/letter%s.docx" % letter_iterator)
-
-
-# ### ##
-        # Convert to PDF2
-
-        # # Submit Job
-        # source_file = "%s/letter%s.docx" % (folder_name, letter_iterator)
-        # target_format = "pdf"
-        #
-        # file_content = {'source_file': open(source_file, 'rb')}
-        # data_content = {'target_format': target_format}
-        # res = requests.post(endpoint, data=data_content, files=file_content, auth=HTTPBasicAuth(zamzar_api_key, ''))
-        # print res.json()
-        # file_id = res.json()['id']
-        #
-        # # Check if the job is done
-        # endpoint = "https://sandbox.zamzar.com/v1/jobs/{}".format(file_id)
-        # response = requests.get(endpoint, auth=HTTPBasicAuth(zamzar_api_key, ''))
-        # status = response.json()['status']
-        #
-        #
-        # print "Checking Status of Conversion of %s" % file_id
-        #
-        # if status =='successful':
-        #     for k in response.json()['target_files']:
-        #         file_id = k['id']
-        #     print response.json()
-        #     print "Finished Converting really quick\nFile id = " + file_id
-        #
-        # else:
-        #
-        #     print status
-        #     while status != 'successful':
-        #         print "File Not ready yet \n Waiting 5 Secs"
-        #         time.sleep(5)
-        #         response = requests.get(endpoint, auth=HTTPBasicAuth(zamzar_api_key, ''))
-        #         status = response.json()['status']
-        #         print status
-        #         print response.json()
-        #
-        # for k in response.json()['target_files']:
-        #     file_id = k['id']
-        # print file_id
-        #
-        # # Download the Finished file
-        # endpoint = "https://sandbox.zamzar.com/v1/files/{}/content".format(file_id)
-        # response = requests.get(endpoint, stream=True, auth=HTTPBasicAuth(zamzar_api_key, ''))
-        #
-        # try:
-        #     with open("%s/letter%s.pdf" % (folder_name, letter_iterator), 'wb') as f:
-        #         for chunk in response.iter_content(chunk_size=1024):
-        #             if chunk:
-        #                 f.write(chunk)
-        #                 f.flush()
-        #
-        #         print "File downloaded"
-        #
-        # except IOError:
-        #     print "Error"
-
-# Send it to the printer Word
-#         print "Sending to printer letter with variables %s" % replacement_dict
-#         # subprocess.check_call(["lp", "-d", "Hannah_s_Printer", "%s/letter%s.pdf" % (folder_name, letter_iterator)])
-#         subprocess.call(["launch", "-p", "%s/letter%s.docx" % (folder_name, letter_iterator)])
-
         letter_iterator = letter_iterator + 1
         newDocx.close()
 
-        time.sleep(3)
-
 shutil.rmtree('word')
 os.remove('temp.xml')
+
+# ### ##
+
+# Convert to SVG
+
+
+time.sleep(letter_iterator*3)
+svg_list = range(letter_iterator)
+
+for svg in svg_list:
+
+    if svg > 0:
+        subprocess.call(["pdf2svg", "/Users/Bruce/Documents/Customisation_Templates/%s/letter%s.pdf" % (folder_name, svg), "/Users/Bruce/Documents/Customisation_Templates/%s/letter%s.svg" % (folder_name, svg)])
+        os.remove('/Applications/LibreOffice.app/Contents/MacOS/letter%s.docx' % svg)
+        os.remove('/Users/Bruce/Documents/Customisation_Templates/%s/letter%s.pdf' % (folder_name, svg))
