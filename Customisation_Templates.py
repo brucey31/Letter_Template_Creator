@@ -8,8 +8,8 @@ import time
 import shutil
 
 
-template_name = 'Hexis_Plus_Letter.docx'
-customization_list = 'xaa_copy.csv'
+template_name = '/home/pi/Documents/Focusge2_template.docx'
+customization_list = '/home/pi/Documents/Focusge2_contacts.csv'
 
 
 # Get your template file and search for the number of parameter to be included in it
@@ -63,45 +63,28 @@ for row in reader:
 
 # Compress the new word file together
         newDocx.write("temp.xml", "word/document.xml")
-
+        newDocx.close()
 
 # ### ##
 
 # Convert to PDF
-        print "Converting " + "~/Documents/Customisation_Templates/%s/letter%s.docx" % (folder_name, letter_iterator)
-        shutil.move("%s/letter%s.docx" % (folder_name, letter_iterator), "/Applications/LibreOffice.app/Contents/MacOS/letter%s.docx" %  letter_iterator)
-        subprocess.Popen(["./soffice", "--convert-to", "pdf", "--outdir", "/Users/Bruce/Documents/Customisation_Templates/%s/" % folder_name, "letter%s.docx" % letter_iterator], cwd="/Applications/LibreOffice.app/Contents/MacOS/", shell=False, stdin=None, stdout=None, stderr=None, close_fds=True)
+        print "Converting " + "/%s/letter%s.docx to PDF" % (folder_name, letter_iterator)
+        docx_pdf = subprocess.call(["soffice", "--headless", "--convert-to", "pdf", "letter%s.docx" % letter_iterator], cwd="/home/pi/Documents/Letter_Template_Creator/%s" % folder_name)
+        time.sleep(10)
+# Convert to svg
+        print "Converting /%s/letter%s.pdf to svg" % (folder_name, letter_iterator)
+        subprocess.call(["pdf2svg", "letter%s.pdf" % letter_iterator, "letter%s.svg" % letter_iterator], cwd="/home/pi/Documents/Letter_Template_Creator/%s" % folder_name)
+        time.sleep(5)
 
         letter_iterator = letter_iterator + 1
-        newDocx.close()
+
+
 
 shutil.rmtree('word')
 os.remove('temp.xml')
 
-time.sleep(letter_iterator * 0.5)
+# Cleaning up
+deletelist = [f for f in os.listdir("%s" % folder_name) if f.endswith("pdf") or f.endswith("docx")]
+for f in deletelist:
+    os.remove(f)
 
-# ### ##
-
-# Convert to SVG & Clean Up
-
-svg_list = range(letter_iterator)
-
-for i in range(15):
-    wait_num = 0
-    for svg in svg_list:
-
-        if svg > 0:
-            if os.path.isfile("/Users/Bruce/Documents/Customisation_Templates/%s/letter%s.pdf" % (folder_name, svg)):
-                subprocess.call(["pdf2svg", "/Users/Bruce/Documents/Customisation_Templates/%s/letter%s.pdf" % (folder_name, svg), "/Users/Bruce/Documents/Customisation_Templates/%s/letter%s.svg" % (folder_name, svg)])
-                os.remove('/Applications/LibreOffice.app/Contents/MacOS/letter%s.docx' % svg)
-                os.remove('/Users/Bruce/Documents/Customisation_Templates/%s/letter%s.pdf' % (folder_name, svg))
-
-            if os.path.isfile("/Applications/LibreOffice.app/Contents/MacOS/letter%s.docx" % svg):
-                print "Letter %s not converted yet" % svg
-                subprocess.Popen(["./soffice", "--convert-to", "pdf", "--outdir", "/Users/Bruce/Documents/Customisation_Templates/%s/" % folder_name, "letter%s.docx" % svg], cwd="/Applications/LibreOffice.app/Contents/MacOS/")
-
-                wait_num = wait_num + 1
-
-            else:
-                print "Letter %s sucessfully completed" % svg
-    time.sleep(wait_num * 1.5)
