@@ -8,8 +8,8 @@ import time
 import shutil
 
 
-template_name = '/home/pi/Documents/Focusge2_template.docx'
-customization_list = '/home/pi/Documents/Focusge2_contacts.csv'
+template_name = 'Focusge2_template.docx'
+customization_list = 'Focusge2_contacts.csv'
 
 
 # Get your template file and search for the number of parameter to be included in it
@@ -73,7 +73,7 @@ for row in reader:
         time.sleep(10)
 # Convert to svg
         print "Converting /%s/letter%s.pdf to svg" % (folder_name, letter_iterator)
-        subprocess.call(["pdf2svg", "letter%s.pdf" % letter_iterator, "letter%s.svg" % letter_iterator], cwd="/home/pi/Documents/Letter_Template_Creator/%s" % folder_name)
+        subprocess.call(["inkscape", "-l" , "letter%s.svg" % letter_iterator, "letter%s.pdf" % letter_iterator,], cwd="/home/pi/Documents/Letter_Template_Creator/%s" % folder_name)
         time.sleep(5)
 
         letter_iterator = letter_iterator + 1
@@ -87,4 +87,3 @@ os.remove('temp.xml')
 deletelist = [f for f in os.listdir("%s" % folder_name) if f.endswith("pdf") or f.endswith("docx")]
 for f in deletelist:
     os.remove(f)
-
