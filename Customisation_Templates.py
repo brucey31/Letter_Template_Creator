@@ -6,10 +6,11 @@ import os
 import subprocess
 import time
 import shutil
+import random
 
 
-template_name = '/home/pi/Documents/Focusge2_template.docx'
-customization_list = '/home/pi/Documents/Focusge2_contacts.csv'
+template_name = 'Servicenow_template_copy.docx'
+customization_list = 'Servicenow_contacts.csv'
 
 
 # Get your template file and search for the number of parameter to be included in it
@@ -52,6 +53,11 @@ for row in reader:
         for key in replacement_dict:
             tempXmlStr = tempXmlStr.replace("param", str(key), 1)
 
+# Randomly Picks one of the fonts to use
+        for i in xrange(250):
+            tempXmlStr = tempXmlStr.replace("RoundHand_1", random.choice(["Roun", "RoundHand_2", "RoundHand_3"]), 1)
+
+
 # Create a tmp file to put the new xml contents in
         with open("temp.xml", "w+") as tempXmlFile:
             tempXmlFile.write(tempXmlStr)
@@ -66,16 +72,16 @@ for row in reader:
         newDocx.close()
 
 # ### ##
-
-# Convert to PDF
-        print "Converting " + "/%s/letter%s.docx to PDF" % (folder_name, letter_iterator)
-        docx_pdf = subprocess.call(["soffice", "--headless", "--convert-to", "pdf", "letter%s.docx" % letter_iterator], cwd="/home/pi/Documents/Letter_Template_Creator/%s" % folder_name)
-        time.sleep(10)
-# Convert to svg
-        print "Converting /%s/letter%s.pdf to svg" % (folder_name, letter_iterator)
-        subprocess.call(["pdf2svg", "letter%s.pdf" % letter_iterator, "letter%s.svg" % letter_iterator], cwd="/home/pi/Documents/Letter_Template_Creator/%s" % folder_name)
-        time.sleep(5)
-
+#
+# # Convert to PDF
+#         print "Converting " + "/%s/letter%s.docx to PDF" % (folder_name, letter_iterator)
+#         docx_pdf = subprocess.call(["soffice", "--headless", "--convert-to", "pdf", "letter%s.docx" % letter_iterator], cwd="/home/pi/Documents/Letter_Template_Creator/%s" % folder_name)
+#         time.sleep(10)
+# # Convert to svg
+#         print "Converting /%s/letter%s.pdf to svg" % (folder_name, letter_iterator)
+#         subprocess.call(["pdf2svg", "letter%s.pdf" % letter_iterator, "letter%s.svg" % letter_iterator], cwd="/home/pi/Documents/Letter_Template_Creator/%s" % folder_name)
+#         time.sleep(5)
+#
         letter_iterator = letter_iterator + 1
 
 
