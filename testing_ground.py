@@ -13,7 +13,7 @@ subprocess.call(["inkscape", "-f","letter24_2.svg", "-g", "--verb", "EditSelectA
                 cwd="/home/pi/Desktop/")
 
 print "Removing Last Line"
-subprocess.call(["inkscape", "-f",  "letter24_2.svg","-g", "--verb", "net.wasbo.filter.reopenSingleLineFont",
+subprocess.call(["inkscape", "-f",  "letter24_2.svg","-g",  "--verb", "EditSelectAll", "--verb", "net.wasbo.filter.reopenSingleLineFont.noprefs",
                  "--verb", "FileSave", "--verb", "FileQuit"],
                 cwd="/home/pi/Desktop/")
 
