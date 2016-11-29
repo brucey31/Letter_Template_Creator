@@ -8,8 +8,8 @@ import time
 import shutil
 
 
-template_name = 'Focusge2_template.docx'
-customization_list = 'Focusge2_contacts.csv'
+template_name = 'Servicenow_template.docx'
+customization_list = 'Servicenow_contacts.csv'
 
 
 # Get your template file and search for the number of parameter to be included in it
