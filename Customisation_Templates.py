@@ -8,8 +8,8 @@ import time
 import shutil
 
 
-template_name = 'Focus GE Back.docx'
-customization_list = 'Contact_list_python.csv'
+template_name = 'FE_JAN_TEMPLATE.docx'
+customization_list = 'FE_JAN_CONTACTS.csv'
 
 # Get your template file and search for the number of parameter to be included in it
 templateDocx = zipfile.ZipFile(template_name)
@@ -62,17 +62,26 @@ for row in reader:
 
 # Compress the new word file together
         newDocx.write("temp.xml", "word/document.xml")
+        newDocx.close()
 
+# Convert to PDF
+        print "Converting " + "/%s/letter%s.docx to PDF" % (folder_name, letter_iterator)
+
+        subprocess.Popen(["soffice", "--convert-to", "pdf", "/Users/brucepannaman/Documents/Letter_Template_Creator/%s/letter%s.docx" % (folder_name, letter_iterator)],
+                         cwd="/Users/brucepannaman/Documents/Letter_Template_Creator/%s/" % folder_name)
+        time.sleep(10)
 
 # Send it to the printer
         print "Sending to printer letter with variables %s" % replacement_dict
         # subprocess.check_call(["lp", "-d", "Hannah_s_Printer", "%s/letter%s.pdf" % (folder_name, letter_iterator)])
-        subprocess.call(["launch", "-p", "%s/letter%s.docx" % (folder_name, letter_iterator)])
+        # subprocess.call(["launch", "-p", "%s/letter%s.docx" % (folder_name, letter_iterator)])
 
         letter_iterator = letter_iterator + 1
-        newDocx.close()
+
 
         time.sleep(3)
 
 shutil.rmtree('word')
 os.remove('temp.xml')
+
+
