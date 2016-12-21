@@ -8,9 +8,8 @@ import time
 import shutil
 
 
-template_name = 'Servicenow_template.docx'
-customization_list = 'Servicenow_contacts.csv'
-
+template_name = 'Focus GE Back.docx'
+customization_list = 'Contact_list_python.csv'
 
 # Get your template file and search for the number of parameter to be included in it
 templateDocx = zipfile.ZipFile(template_name)
@@ -23,7 +22,7 @@ reader = csv.reader(Customisation_list)
 folder_name = time.strftime('%Y-%m-%d-%H:%M:%S')
 os.mkdir(folder_name)
 
-letter_iterator = 1
+letter_iterator = 0
 
 for row in reader:
     replacement_dict = []
@@ -63,27 +62,17 @@ for row in reader:
 
 # Compress the new word file together
         newDocx.write("temp.xml", "word/document.xml")
-        newDocx.close()
 
-# ### ##
 
-# Convert to PDF
-        print "Converting " + "/%s/letter%s.docx to PDF" % (folder_name, letter_iterator)
-        docx_pdf = subprocess.call(["soffice", "--headless", "--convert-to", "pdf", "letter%s.docx" % letter_iterator], cwd="/home/pi/Documents/Letter_Template_Creator/%s" % folder_name)
-        time.sleep(10)
-# Convert to svg
-        print "Converting /%s/letter%s.pdf to svg" % (folder_name, letter_iterator)
-        subprocess.call(["inkscape", "-l" , "letter%s.svg" % letter_iterator, "letter%s.pdf" % letter_iterator,], cwd="/home/pi/Documents/Letter_Template_Creator/%s" % folder_name)
-        time.sleep(5)
+# Send it to the printer
+        print "Sending to printer letter with variables %s" % replacement_dict
+        # subprocess.check_call(["lp", "-d", "Hannah_s_Printer", "%s/letter%s.pdf" % (folder_name, letter_iterator)])
+        subprocess.call(["launch", "-p", "%s/letter%s.docx" % (folder_name, letter_iterator)])
 
         letter_iterator = letter_iterator + 1
+        newDocx.close()
 
-
+        time.sleep(3)
 
 shutil.rmtree('word')
 os.remove('temp.xml')
-
-# Cleaning up
-deletelist = [f for f in os.listdir("%s" % folder_name) if f.endswith("pdf") or f.endswith("docx")]
-for f in deletelist:
-    os.remove(f)
