@@ -8,8 +8,8 @@ import time
 import shutil
 
 
-template_name = 'FE_JAN_TEMPLATE.docx'
-customization_list = 'FE_JAN_CONTACTS.csv'
+template_name = 'Tangent_Template.docx'
+customization_list = 'Tangent_Contacts.csv'
 
 # Get your template file and search for the number of parameter to be included in it
 templateDocx = zipfile.ZipFile(template_name)
@@ -67,8 +67,7 @@ for row in reader:
 # Convert to PDF
         print "Converting " + "/%s/letter%s.docx to PDF" % (folder_name, letter_iterator)
 
-        subprocess.Popen(["soffice", "--convert-to", "pdf", "/Users/brucepannaman/Documents/Letter_Template_Creator/%s/letter%s.docx" % (folder_name, letter_iterator)],
-                         cwd="/Users/brucepannaman/Documents/Letter_Template_Creator/%s/" % folder_name)
+        subprocess.Popen(["soffice", "--convert-to", "pdf", "/Users/Bruce/Documents/Customisation_Templates/%s/letter%s.docx" % (folder_name, letter_iterator)], cwd="/Users/Bruce/Documents/Customisation_Templates/%s/" % folder_name)
         time.sleep(10)
 
 # Send it to the printer
