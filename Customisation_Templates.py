@@ -36,10 +36,12 @@ for row in reader:
 
 # Validation of the customization list against the variables
     if len(replacement_dict) > num_variables:
-        print "Holy shit man, there are not enough paramater in your template for the ones ons your customisation sheet"
+        print "Holy shit man, there are not enough paramater in your template for the ones on your customisation sheet"
+        continue
 
     if len(replacement_dict) < num_variables:
         print "Holy shit man, you have too few variables in your customisation sheet"
+        continue
 
     else:
         print "All Good in the hood, creating your letter with variables %s" % replacement_dict
@@ -68,7 +70,7 @@ for row in reader:
         print "Converting " + "/%s/letter%s.docx to PDF" % (folder_name, letter_iterator)
 
         subprocess.Popen(["soffice", "--convert-to", "pdf", "/Users/Bruce/Documents/Customisation_Templates/%s/letter%s.docx" % (folder_name, letter_iterator)], cwd="/Users/Bruce/Documents/Customisation_Templates/%s/" % folder_name)
-        time.sleep(10)
+        time.sleep(7)
 
 # Send it to the printer
         print "Sending to printer letter with variables %s" % replacement_dict
