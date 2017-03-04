@@ -8,14 +8,10 @@ import time
 import shutil
 
 
-template_name = 'Tangent_Template.docx'
-customization_list = 'Tangent_Contacts.csv'
-
-# Get your template file and search for the number of parameter to be included in it
-templateDocx = zipfile.ZipFile(template_name)
+template_folder = 'FOCUSGE_TEMPLATES'
+customization_list = 'FOCUSGE_CONTACTS.csv'
 
 # Look through and validate you customisation list
-
 Customisation_list = open(customization_list, "rb")
 reader = csv.reader(Customisation_list)
 
@@ -25,18 +21,26 @@ os.mkdir(folder_name)
 letter_iterator = 0
 
 for row in reader:
+    template_name = template_folder +"/"+ str(row[0])+".docx"
+    print "Using Template %s for this letter" % template_name
+
+    templateDocx = zipfile.ZipFile(template_name)
     replacement_dict = []
 
     with open(templateDocx.extract("word/document.xml", "")) as tempXmlFile:
         tempXmlStr = tempXmlFile.read()
         num_variables = str.count(tempXmlStr, 'param')
 
+    field_iterator = 0
     for field in row:
-        replacement_dict.append(field)
+        if field_iterator > 0:
+            replacement_dict.append(field)
+
+        field_iterator += 1
 
 # Validation of the customization list against the variables
     if len(replacement_dict) > num_variables:
-        print "Holy shit man, there are not enough paramater in your template for the ones on your customisation sheet"
+        print "Holy shit man, there are not enough parameters in your template for the ones on your customisation sheet"
         continue
 
     if len(replacement_dict) < num_variables:
@@ -73,16 +77,19 @@ for row in reader:
         time.sleep(7)
 
 # Send it to the printer
-        print "Sending to printer letter with variables %s" % replacement_dict
+#         print "Sending to printer letter with variables %s" % replacement_dict
         # subprocess.check_call(["lp", "-d", "Hannah_s_Printer", "%s/letter%s.pdf" % (folder_name, letter_iterator)])
         # subprocess.call(["launch", "-p", "%s/letter%s.docx" % (folder_name, letter_iterator)])
 
         letter_iterator = letter_iterator + 1
-
-
         time.sleep(3)
 
 shutil.rmtree('word')
 os.remove('temp.xml')
+
+deletelist = [f for f in os.listdir(folder_name) if f.endswith(".docx")]
+for f in deletelist:
+    os.remove("%s/%s" % (folder_name, f))
+
 
 
