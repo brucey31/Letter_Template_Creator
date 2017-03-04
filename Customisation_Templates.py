@@ -85,4 +85,6 @@ for row in reader:
 shutil.rmtree('word')
 os.remove('temp.xml')
 
-
+deletelist = [f for f in os.listdir(folder_name) if f.endswith(".docx")]
+for f in deletelist:
+    os.remove("%s/%s" % (folder_name, f))
