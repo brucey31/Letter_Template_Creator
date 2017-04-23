@@ -6,10 +6,11 @@ import os
 import subprocess
 import time
 import shutil
+import testing_ground
 
 
-template_name = 'Servicenow_template.docx'
-customization_list = 'Servicenow_contacts.csv'
+template_name = 'FOCUSGE_TEMPLATE.docx'
+customization_list = 'FOCUSGE_CONTACTS2.csv'
 
 
 # Get your template file and search for the number of parameter to be included in it
@@ -77,6 +78,8 @@ for row in reader:
         time.sleep(5)
 
         letter_iterator = letter_iterator + 1
+
+        testing_ground.prepare_and_send_to_machine(folder_name, "letter%s.svg" % letter_iterator)
 
 
 
