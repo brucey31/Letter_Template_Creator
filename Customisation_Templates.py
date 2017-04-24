@@ -9,7 +9,7 @@ import shutil
 import testing_ground
 
 
-template_name = 'FOCUSGE_TEMPLATE.docx'
+template_name = 'FOCUSGE_TEMPLATE2.docx'
 customization_list = 'FOCUSGE_CONTACTS2.csv'
 
 
@@ -77,14 +77,12 @@ for row in reader:
         subprocess.call(["inkscape", "-l" , "letter%s.svg" % letter_iterator, "letter%s.pdf" % letter_iterator,], cwd="/home/pi/Documents/Letter_Template_Creator/%s" % folder_name)
         time.sleep(5)
 
-        letter_iterator = letter_iterator + 1
-
         testing_ground.prepare_and_send_to_machine(folder_name, "letter%s.svg" % letter_iterator)
 
+        letter_iterator = letter_iterator + 1
 
-
-shutil.rmtree('word')
-os.remove('temp.xml')
+        shutil.rmtree('word')
+        os.remove('temp.xml')
 
 # Cleaning up
 deletelist = [f for f in os.listdir("%s" % folder_name) if f.endswith("pdf") or f.endswith("docx")]
