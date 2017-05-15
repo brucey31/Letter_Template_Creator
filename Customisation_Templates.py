@@ -9,12 +9,11 @@ import shutil
 import testing_ground
 
 
-template_name = 'FOCUSGE_TEMPLATE.docx'
+template_folder = 'FOCUSGE_TEMPLATES'
 customization_list = 'FOCUSGE_CONTACTS2.csv'
 
 
 # Get your template file and search for the number of parameter to be included in it
-templateDocx = zipfile.ZipFile(template_name)
 
 # Look through and validate you customisation list
 
@@ -27,16 +26,22 @@ os.mkdir(folder_name)
 letter_iterator = 1
 
 for row in reader:
+    template_name = template_folder + "/" + str(row[0])
+    templateDocx = zipfile.ZipFile(template_name)
     replacement_dict = []
 
     with open(templateDocx.extract("word/document.xml", "")) as tempXmlFile:
         tempXmlStr = tempXmlFile.read()
         num_variables = str.count(tempXmlStr, 'param')
 
+    field_iterator = 0
     for field in row:
-        replacement_dict.append(field)
+        if field_iterator > 0:
+            replacement_dict.append(field)
 
-# Validation of the customization list against the variables
+        field_iterator += 1
+
+    # Validation of the customization list against the variables
     if len(replacement_dict) > num_variables:
         print "Holy shit man, there are not enough paramater in your template for the ones ons your customisation sheet"
 
@@ -66,7 +71,6 @@ for row in reader:
         newDocx.write("temp.xml", "word/document.xml")
         newDocx.close()
 
-# ### ##
 
 # Convert to PDF
         print "Converting " + "/%s/letter%s.docx to PDF" % (folder_name, letter_iterator)
