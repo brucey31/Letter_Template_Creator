@@ -21,7 +21,7 @@ os.mkdir(folder_name)
 letter_iterator = 0
 
 for row in reader:
-    template_name = template_folder +"/"+ str(row[0])+".docx"
+    template_name = template_folder +"/"+ str(row[0])
     print "Using Template %s for this letter" % template_name
 
     templateDocx = zipfile.ZipFile(template_name)
