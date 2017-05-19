@@ -50,7 +50,7 @@ def prepare_and_send_to_machine(folder, filo):
         print e
 
     # os.remove('/home/pi/Desktop/letter24.svg')
-    os.remove('%s/%s_2.svg' % (folder, filo))
+    os.remove('%s/letter%s_2.svg' % (folder, filo))
 
     print "Sending file to Axidraw"
     try:
