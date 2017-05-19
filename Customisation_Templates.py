@@ -75,15 +75,15 @@ for row in reader:
 # Convert to PDF
         print "Converting " + "/%s/letter%s.docx to PDF" % (folder_name, letter_iterator)
         docx_pdf = subprocess.call(["soffice", "--headless", "--convert-to", "pdf", "letter%s.docx" % letter_iterator], cwd="/home/pi/Documents/Letter_Template_Creator/%s" % folder_name)
-        time.sleep(10)
+        time.sleep(5)
 # Convert to svg
         print "Converting /%s/letter%s.pdf to svg" % (folder_name, letter_iterator)
-        subprocess.call(["inkscape", "-l" , "letter%s.svg" % letter_iterator, "letter%s.pdf" % letter_iterator,], cwd="/home/pi/Documents/Letter_Template_Creator/%s" % folder_name)
+        subprocess.call(["inkscape", "-l", "letter%s.svg" % letter_iterator, "letter%s.pdf" % letter_iterator], cwd="/home/pi/Documents/Letter_Template_Creator/%s" % folder_name)
         time.sleep(5)
 
         letter_iterator = letter_iterator + 1
 
-        testing_ground.prepare_and_send_to_machine(folder_name, "letter%s.svg" % letter_iterator)
+        testing_ground.prepare_and_send_to_machine(folder_name, "%s" % letter_iterator)
 
 
 

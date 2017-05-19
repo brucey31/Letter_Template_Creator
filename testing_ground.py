@@ -7,8 +7,8 @@ def prepare_and_send_to_machine(folder, filo):
 
     print "Optimising Document Units for CNC Operations"
     try:
-        with open("%s/%s_2.svg" % (folder, filo), 'w+') as write_file:
-            with open("%s/%s.svg" % (folder, filo), 'r') as svg_file:
+        with open("%s/letter%s_2.svg" % (folder, filo), 'w+') as write_file:
+            with open("%s/letter%s.svg" % (folder, filo), 'r') as svg_file:
                 regex1 = 'height=".*"'
                 regex2 = 'width=".*"'
                 for line in svg_file:
@@ -23,7 +23,7 @@ def prepare_and_send_to_machine(folder, filo):
 
     print 'Changing Objects to Paths'
     try:
-        subprocess.call(["inkscape", "%s_2.svg" % filo, "--export-text-to-path", "--export-plain-svg", "%s_3.svg" % filo],
+        subprocess.call(["inkscape", "letter%s_2.svg" % filo, "--export-text-to-path", "--export-plain-svg", "letter%s_3.svg" % filo],
                         cwd="%s" % folder)
     except Exception as e:
         print "Failed to change objects to path within the svg"
@@ -31,7 +31,7 @@ def prepare_and_send_to_machine(folder, filo):
 
     print 'Ungrouping all'
     try:
-        subprocess.call(["inkscape", "-f", "%s_3.svg" % filo, "-g", "--verb", "EditSelectAll", "--verb", "SelectionUnGroup",
+        subprocess.call(["inkscape", "-f", "letter%s_3.svg" % filo, "-g", "--verb", "EditSelectAll", "--verb", "SelectionUnGroup",
                          "--verb", "SelectionUnGroup", "--verb", "SelectionUnGroup", "--verb", "SelectionUnGroup", "--verb",
                          "SelectionUnGroup", "--verb", "SelectionUnGroup",
                          "--verb", "FileSave", "--verb", "FileQuit"],
@@ -42,7 +42,7 @@ def prepare_and_send_to_machine(folder, filo):
 
     print "Removing Last Line"
     try:
-        subprocess.call(["inkscape", "-f", "%s_3.svg" % filo, "-g", "--verb", "EditSelectAll", "--verb",
+        subprocess.call(["inkscape", "-f", "letter%s_3.svg" % filo, "-g", "--verb", "EditSelectAll", "--verb",
                          "net.wasbo.filter.reopenSingleLineFont.noprefs", "--verb", "FileSave", "--verb", "FileQuit"],
                         cwd="%s" % folder)
     except Exception as e:
@@ -55,7 +55,7 @@ def prepare_and_send_to_machine(folder, filo):
     print "Sending file to Axidraw"
     try:
         subprocess.call(
-            ["inkscape", "-f", "%s_3.svg" % filo, "-g", "--verb", "command.evilmadscientist.axidraw.rev110b.noprefs",
+            ["inkscape", "-f", "letter%s_3.svg" % filo, "-g", "--verb", "command.evilmadscientist.axidraw.rev110b.noprefs",
              "--verb", "FileSave", "--verb", "FileQuit"],
             cwd="%s" % folder)
     except Exception as e:
