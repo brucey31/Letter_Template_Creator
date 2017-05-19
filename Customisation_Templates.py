@@ -81,11 +81,9 @@ for row in reader:
         subprocess.call(["inkscape", "-l", "letter%s.svg" % letter_iterator, "letter%s.pdf" % letter_iterator], cwd="/home/pi/Documents/Letter_Template_Creator/%s" % folder_name)
         time.sleep(5)
 
-        letter_iterator = letter_iterator + 1
-
         testing_ground.prepare_and_send_to_machine(folder_name, "%s" % letter_iterator)
 
-
+        letter_iterator = letter_iterator + 1
 
 shutil.rmtree('word')
 os.remove('temp.xml')
