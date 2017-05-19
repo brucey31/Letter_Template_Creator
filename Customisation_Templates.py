@@ -10,7 +10,7 @@ import testing_ground
 
 
 template_folder = 'FOCUSGE_TEMPLATES'
-customization_list = 'FOCUSGE_CONTACTS2.csv'
+customization_list = 'FOCUSGE_CONTACTS.csv'
 
 
 # Get your template file and search for the number of parameter to be included in it
