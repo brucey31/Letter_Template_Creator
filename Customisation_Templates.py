@@ -7,11 +7,13 @@ import subprocess
 import time
 import shutil
 import testing_ground
+from pygame import mixer
 
+template_name = 'FOCUSGE_TEMPLATE_MACHINE.docx'
+customization_list = 'FOCUSGE_CONTACTS_V2M.csv'
 
-template_name = 'FOCUSGE_TEMPLATE2.docx'
-customization_list = 'FOCUSGE_CONTACTS2.csv'
-
+mixer.init()
+mixer.music.load("alarm.mp3")
 
 # Get your template file and search for the number of parameter to be included in it
 templateDocx = zipfile.ZipFile(template_name)
@@ -71,13 +73,14 @@ for row in reader:
 # Convert to PDF
         print "Converting " + "/%s/letter%s.docx to PDF" % (folder_name, letter_iterator)
         docx_pdf = subprocess.call(["soffice", "--headless", "--convert-to", "pdf", "letter%s.docx" % letter_iterator], cwd="/home/pi/Documents/Letter_Template_Creator/%s" % folder_name)
-        time.sleep(10)
+        time.sleep(5)
 # Convert to svg
         print "Converting /%s/letter%s.pdf to svg" % (folder_name, letter_iterator)
         subprocess.call(["inkscape", "-l" , "letter%s.svg" % letter_iterator, "letter%s.pdf" % letter_iterator,], cwd="/home/pi/Documents/Letter_Template_Creator/%s" % folder_name)
         time.sleep(5)
 
         testing_ground.prepare_and_send_to_machine(folder_name, "letter%s.svg" % letter_iterator)
+	mixer.music.play()
 
         letter_iterator = letter_iterator + 1
 
